@@ -11,7 +11,7 @@ This ESPHome sketch will let you setup the iSpindel for integrating it seamlessl
 * MPU6050 Accelerometer/Gyroscope Sensor
 * TP4056 Standalone Linear Li-lon Battery Charger
 * 18650 Battery
-* a Petling
+* Petling
 * some balancing weights (5g) for calibration
 
 ## How it works
