@@ -1,0 +1,183 @@
+## inspiriert durch https://www.ispindel.de/
+
+esphome:
+  name: i_spindel_1
+  platform: ESP8266
+  board: d1_mini
+  on_boot:
+    then:
+      - script.execute: wait_for_maintainance_on_boot
+
+wifi:
+  networks:
+    - ssid: !secret wifi_essid
+      password: !secret wifi_pwd
+
+  # Enable fallback hotspot (captive portal) in case wifi connection fails
+  ap:
+    ssid: "fallback"
+    password: "fallback"
+
+captive_portal:
+
+# Enable logging
+logger:
+
+# Enable Home Assistant API
+api:
+
+ota:
+
+
+# wird die iSpindel eingeschaltet?
+globals:
+ - id: on_power_up
+   type: bool
+   restore_value: yes
+   initial_value: 'true'
+
+## Deep Sleep: https://esphome.io/components/deep_sleep.html
+deep_sleep:
+  id: deep_sleep_control
+  sleep_duration: 32min
+  
+binary_sensor:
+  - platform: homeassistant
+    id: i_spindel_1_prevent_deep_sleep
+    name: iSpindel 1 Prevent Deep Sleep
+    entity_id: input_boolean.esphome_prevent_deep_sleep
+    internal: true
+  - platform: homeassistant
+    id: i_spindel_1_brewery_prevent_deep_sleep
+    name: iSpindel 1 Brewery Prevent Deep Sleep
+    entity_id: input_boolean.brewery_esphome_prevent_deep_sleep 
+    internal: true
+    
+
+# i2c configuration
+i2c:
+  sda: GPIO5
+  scl: GPIO2
+
+# sensors configuration
+sensor:
+# Analog Sensor zur Batteriemessung
+# Schaltung: https://ezcontents.org/esp8266-battery-level-meter
+# Berechnung: https://community.home-assistant.io/t/battery-level-attribute-from-esp/175685/19
+  - platform: adc
+    name: "iSpindel 1 relative Battery Voltage"
+    update_interval: 10s
+    pin: A0
+    id: "vcc"
+    internal: true
+    filters:
+      - multiply: 4.2
+      
+  - platform: template
+    name: "iSpindel 1 Battery Voltage"
+    unit_of_measurement: 'V'
+    icon: 'mdi:current-dc'
+    update_interval: 10s
+    accuracy_decimals: 2
+    lambda: |-
+      return (id(vcc).state);
+      
+  - platform: template
+    name: "iSpindel 1 Battery Percentage"
+    unit_of_measurement: '%'
+    device_class: battery
+    update_interval: 10s
+    accuracy_decimals: 0
+    lambda: |-
+      return ((id(vcc).state-3) /1.2 * 100.00);
+
+
+# Gyro-Sensor
+  - platform: mpu6050
+    address: 0x68
+    update_interval: 5s
+    id: mpu6050_1
+    accel_x:
+      name: "iSpindel 1 MPU6050 Accel X"
+      id: accel_x
+    accel_y:
+      name: "iSpindel 1 MPU6050 Accel Y"
+      id: accel_y
+    accel_z:
+      name: "iSpindel 1 MPU6050 Accel z"
+      id: accel_z
+    gyro_x:
+      name: "iSpindel 1 MPU6050 Gyro X"
+    gyro_y:
+      name: "iSpindel 1 MPU6050 Gyro Y"
+    gyro_z:
+      name: "iSpindel 1 MPU6050 Gyro z"
+    temperature:
+      name: "iSpindel 1 MPU6050 Temperature"
+      filters:
+        offset: 1.4
+
+# Winkelberechnung: https://how2electronics.com/measure-tilt-angle-mpu6050-arduino/
+  - platform: template
+    name: "iSpindel 1 MPU6050 Angle X"
+    unit_of_measurement: "°"
+    icon: "mdi:angle-acute"
+    lambda: |-
+      return RAD_TO_DEG * (atan2(-(id(accel_y).state), -(id(accel_z).state))+PI);
+    update_interval: 5s
+
+  - platform: template
+    name: "iSpindel 1 MPU6050 Angle Y"
+    unit_of_measurement: "°"
+    icon: "mdi:angle-acute"
+    lambda: |-
+      return RAD_TO_DEG * (atan2(-(id(accel_x).state), -(id(accel_z).state))+PI);
+    update_interval: 5s
+
+  - platform: template
+    name: "iSpindel 1 MPU6050 Angle Z"
+    unit_of_measurement: "°"
+    icon: "mdi:angle-acute"
+    lambda: |-
+      return RAD_TO_DEG * (atan2(-(id(accel_y).state), -(id(accel_x).state))+PI);
+    update_interval: 5s
+    
+    
+## Deep Sleep: https://esphome.io/components/deep_sleep.html
+script:
+  - id: wait_for_maintainance_on_boot
+    mode: queued
+    then:
+      - delay: 20s
+      - if:
+          condition:
+            lambda: |-
+              return id(on_power_up) == true;
+          then:
+            - logger.log: '[DEEP_SLEEP]: Entering wait_for_maintainance_on_boot, 3 mins left for admin stuff..'
+            - delay: 60s
+            - lambda: |-
+                id(on_power_up) = false;
+          else:
+            - logger.log: '[DEEP_SLEEP]: Comming from deep-sleep, no wait_for_maintainance_on_boot needed..'
+      - logger.log: '[DEEP_SLEEP]: Starting deep-sleep control workflow now....'
+      - script.execute: consider_deep_sleep
+
+  - id: consider_deep_sleep
+    mode: queued
+    then:
+      - logger.log: '[DEEP_SLEEP]: Entering consider_deep_sleep'
+      - delay: 20s
+      - if:
+          condition:
+            or:
+              - binary_sensor.is_on: i_spindel_1_prevent_deep_sleep
+              - binary_sensor.is_on: i_spindel_1_brewery_prevent_deep_sleep
+          then:
+            - logger.log: '[DEEP_SLEEP]: Skipping sleep per prevent_deep_sleep..'
+          else:
+            - logger.log: '[DEEP_SLEEP]: Entering deep sleep per !prevent_deep_sleep..'
+            - deep_sleep.enter: deep_sleep_control
+      - script.execute: consider_deep_sleep
+      
+    
