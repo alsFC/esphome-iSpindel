@@ -15,7 +15,7 @@ This ESPHome sketch will let you setup the iSpindel for integrating it seamlessl
 * some balancing weights (5g) for calibration
 
 ## How it works
-All the magic happens by measuring the current angle of the MPU6050. In my setup this is the angle of y-axis. With the initial calibration described in detail on https://www.ispindel.de/ the angle lets you read the current gravity of the wort and by comparing it to the initial gravity of course also the current share of alcohol. To have current gravity and alcohol in the Lovelace UI I created some template sensors where also the calibration parameters are used. For the original gravity input I use a numeric input helper.
+All the magic happens by measuring the current angle of the MPU6050. In my setup this is the angle of y-axis. With the initial calibration described in detail on https://www.ispindel.de/ the angle lets you read the current gravity of the wort and by comparing it to the initial gravity of course also the current share of alcohol. To have current gravity and alcohol in the Lovelace UI I created some template sensors where also the calibration parameters are used. For the original gravity input I use a numeric input helper `input_number.og_spindel_1`.
 
 ## Some more functionalities in the sketch
 To monitor the current battery state I read the voltage on A0 and calculate as absolute and percentage voltage in relation to the parameters of the 18650 battery. It results in two additional sensors, the percentage one as `device_class: battery` to use it in HA.
