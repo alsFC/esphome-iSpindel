@@ -1,0 +1,25 @@
+## iSpindel Sensoren
+  - platform: template
+    sensors:
+      # Kalibrierung: https://www.ispindel.de/tools/calibration/calibration.htm
+      # Degree 1: 1.1702768031189128-0.005302144249512833 *tilt
+      # Degree 2: 1.3393971643602924-0.01880528777224958 *tilt + 0.0002594393787025637 *tilt*tilt
+      # Degree 3: 1.5132484732437057-0.039908533331515395 *tilt + 0.0010923647230345666 *tilt*tilt-0.000010717371591144017 *tilt*tilt*tilt
+      i_spindel_1_gravity:
+        friendly_name: "Spez. Dichte iSpindel 1"
+        icon_template: "mdi:water-percent"
+        value_template: '{{ (1000 * (1.5132484732437057 - 0.039908533331515395 * states("sensor.ispindel_1_mpu6050_angle_x") | float + 0.0010923647230345666 * states("sensor.ispindel_1_mpu6050_angle_x") | float **2 - 0.000010717371591144017 * states("sensor.ispindel_1_mpu6050_angle_x") | float **3)) | round(0) }}'
+
+      i_spindel_1_og_plato:
+        # Berechnung: Plato = (-1 * 616.868) + (1111.14 * sg) – (630.272 * sg^2) + (135.997 * sg^3)
+        friendly_name: "Stammwürze iSpindel 1"
+        icon_template: "mdi:water-percent"
+        unit_of_measurement: "°P"
+        value_template: '{{ ((-1 * 616.868) + (1111.14 * (states("input_number.og_spindel_1") | float * 0.001)) - (630.272 * (states("input_number.og_spindel_1") | float * 0.001) **2) + (135.997 * (states("input_number.og_spindel_1") | float * 0.001) **3)) | round(2) }}'
+
+      i_spindel_1_abv:
+        # Berechnung: ABV = (OG-FG) x 131.25
+        friendly_name: "Alkohol iSpindel 1"
+        icon_template: "mdi:water-percent"
+        unit_of_measurement: "% Vol."
+        value_template: '{{ ((states("input_number.og_spindel_1") | float - states("sensor.i_spindel_1_gravity") | float) / 1000 * 131.25) | round(2) }}'
