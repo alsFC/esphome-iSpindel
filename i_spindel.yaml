@@ -63,7 +63,6 @@ i2c:
 sensor:
 # Analog Sensor zur Batteriemessung
 # Schaltung: https://ezcontents.org/esp8266-battery-level-meter
-# Berechnung: https://community.home-assistant.io/t/battery-level-attribute-from-esp/175685/19
   - platform: adc
     name: "iSpindel 1 relative Battery Voltage"
     update_interval: 10s
