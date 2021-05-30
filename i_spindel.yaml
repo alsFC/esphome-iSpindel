@@ -70,7 +70,7 @@ sensor:
     id: "vcc"
     internal: true
     filters:
-      - multiply: 3.7
+      - multiply: 4.2
       
   - platform: template
     name: "iSpindel 1 Battery Voltage"
@@ -88,7 +88,7 @@ sensor:
     update_interval: 10s
     accuracy_decimals: 0
     lambda: |-
-      return ((id(vcc).state-3) /0.7 * 100.00);
+      return ((id(vcc).state-3) /1.2 * 100.00);
 
 
 # Gyro-Sensor
