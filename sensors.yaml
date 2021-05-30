@@ -8,7 +8,7 @@
       i_spindel_1_gravity:
         friendly_name: "Spez. Dichte iSpindel 1"
         icon_template: "mdi:water-percent"
-        value_template: '{{ (1000 * (1.5132484732437057 - 0.039908533331515395 * states("sensor.ispindel_1_mpu6050_angle_x") | float + 0.0010923647230345666 * states("sensor.ispindel_1_mpu6050_angle_x") | float **2 - 0.000010717371591144017 * states("sensor.ispindel_1_mpu6050_angle_x") | float **3)) | round(0) }}'
+        value_template: '{{ (1000 * (1.5132484732437057 - 0.039908533331515395 * states("sensor.ispindel_1_mpu6050_angle_y") | float + 0.0010923647230345666 * states("sensor.ispindel_1_mpu6050_angle_y") | float **2 - 0.000010717371591144017 * states("sensor.ispindel_1_mpu6050_angle_y") | float **3)) | round(0) }}'
 
       i_spindel_1_og_plato:
         # Berechnung: Plato = (-1 * 616.868) + (1111.14 * sg) – (630.272 * sg^2) + (135.997 * sg^3)
