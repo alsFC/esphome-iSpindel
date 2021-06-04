@@ -8,7 +8,12 @@
       i_spindel_1_gravity:
         friendly_name: "Spez. Dichte iSpindel 1"
         icon_template: "mdi:water-percent"
-        value_template: '{{ (1000 * (1.5132484732437057 - 0.039908533331515395 * states("sensor.ispindel_1_mpu6050_angle_y") | float + 0.0010923647230345666 * states("sensor.ispindel_1_mpu6050_angle_y") | float **2 - 0.000010717371591144017 * states("sensor.ispindel_1_mpu6050_angle_y") | float **3)) | round(0) }}'
+        value_template: >-
+          {% if states("sensor.ispindel_1_mpu6050_angle_y") != "unknown" and states("sensor.ispindel_1_mpu6050_angle_y") != "Unknown" %}
+            {{ (1000 * (1.5132484732437057 - 0.039908533331515395 * states("sensor.ispindel_1_mpu6050_angle_y") | float + 0.0010923647230345666 * states("sensor.ispindel_1_mpu6050_angle_y") | float **2 - 0.000010717371591144017 * states("sensor.ispindel_1_mpu6050_angle_y") | float **3)) | round(0) }}
+          {% else %}
+            Unknown
+          {% endif %}
 
       i_spindel_1_og_plato:
         # Berechnung: Plato = (-1 * 616.868) + (1111.14 * sg) – (630.272 * sg^2) + (135.997 * sg^3)
@@ -22,4 +27,10 @@
         friendly_name: "Alkohol iSpindel 1"
         icon_template: "mdi:water-percent"
         unit_of_measurement: "% Vol."
-        value_template: '{{ ((states("input_number.og_spindel_1") | float - states("sensor.i_spindel_1_gravity") | float) / 1000 * 131.25) | round(2) }}'
+        value_template: >-
+          {% if states("sensor.i_spindel_1_gravity") != "unknown" and states("sensor.i_spindel_1_gravity") != "Unknown" %}
+            {{ ((states("input_number.og_spindel_1") | float - states("sensor.i_spindel_1_gravity") | float) / 1000 * 131.25) | round(2) }}
+          {% else %}
+            Unknown
+          {% endif %}
+          
