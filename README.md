@@ -1,7 +1,7 @@
 # esphome-iSpindel
 iSpindel for ESPHome
 
-Inspired by the awesome project iSpindel: https://www.ispindel.de/
+Inspired by the awesome project iSpindel: <a href="https://www.ispindel.de/" target="_blank">https://www.ispindel.de/</a>
 
 This ESPHome sketch will let you setup the iSpindel for integrating it seamlessly into Home Assistant via ESPHome to control your homebrews with Home Assistant!
 
