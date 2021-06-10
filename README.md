@@ -5,7 +5,7 @@ Inspired by the awesome project iSpindel: <a href="https://www.ispindel.de/" tar
 
 This ESPHome sketch will let you setup the iSpindel for integrating it seamlessly into Home Assistant via ESPHome to control your homebrews with Home Assistant!
 
-It helps us to create our beers at <a href="https://www.instagram.com/be_brewing" target="_blank">big_endian_brewing</a>.
+It helps us to create our beers at [big_endian_brewing](https://www.instagram.com/be_brewing).
 
 ![iSpindel](https://user-images.githubusercontent.com/14979356/121530393-aa89d280-c9fd-11eb-9607-94b231e06b0b.png "iSpindel")
 
