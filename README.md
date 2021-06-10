@@ -5,8 +5,8 @@ Inspired by the awesome project iSpindel: https://www.ispindel.de/
 
 This ESPHome sketch will let you setup the iSpindel for integrating it seamlessly into Home Assistant via ESPHome.
 
-![1B0E5B90-7810-41DF-BA6F-E979B71411F3](https://user-images.githubusercontent.com/14979356/121529011-47e40700-c9fc-11eb-9d9c-3ef650e624fd.JPG)
-![IMG_6299](https://user-images.githubusercontent.com/14979356/121529082-58947d00-c9fc-11eb-927f-1bd1d4e596c5.PNG)
+![iSpindel](https://user-images.githubusercontent.com/14979356/121530393-aa89d280-c9fd-11eb-9607-94b231e06b0b.png "iSpindel")
+
 
 ## Hardware
 * Wemos D1 Mini
